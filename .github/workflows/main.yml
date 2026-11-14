@@ -21,7 +21,7 @@ jobs:
       uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
-        ndk-version: r24
+        ndk-version: r32
     - name: Build release
       run: |
         chmod 777 ./build.sh
