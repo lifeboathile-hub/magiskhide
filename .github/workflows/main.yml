@@ -1,42 +1,14 @@
-name: Build MagiskHide
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-        fetch-depth: 0
-    - name: SetupNDK
+    - name: Setup NDK & Git Config
       uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
         ndk-version: r28
+
+    - name: Configure Git Credentials
+      run: |
+        git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
     - name: Build release
       run: |
         chmod 777 ./build.sh
         ./build.sh release
-    - name: Upload release
-      uses: actions/upload-artifact@v4
-      with:
-        name: magiskhide-release
-        path: out/magisk-module
-    - name: Build debug
-      run: |
-        chmod 777 ./build.sh
-        ./build.sh debug
-    - name: Upload debug
-      uses: actions/upload-artifact@v4
-      with:
-        name: magiskhide-debug
-        path: out/magisk-module
